@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.skypack.dev/three';
+import { GLTFLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js';
 
 let scene, camera, renderer;
 
@@ -32,6 +33,22 @@ function initScene() {
   );
   plane.rotation.x = -Math.PI / 2;
   scene.add(plane);
+
+  // Загрузка 3D-лиса
+  const loader = new GLTFLoader();
+  loader.load(
+    'https://models.readyplayer.me/64ee073cd4e4075dcadbb8c3.glb',
+    (gltf) => {
+      const fox = gltf.scene;
+      fox.scale.set(2, 2, 2);
+      fox.position.set(0, 0, 0);
+      scene.add(fox);
+    },
+    undefined,
+    (error) => {
+      console.error('Ошибка загрузки модели:', error);
+    }
+  );
 }
 
 function animate() {

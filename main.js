@@ -1,5 +1,6 @@
 import * as THREE from 'https://cdn.skypack.dev/three';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js';
+import { initUI } from './ui.js';
 
 let scene, camera, renderer;
 
@@ -17,7 +18,7 @@ function initScene() {
   camera.position.set(0, 10, 20);
   camera.lookAt(0, 0, 0);
 
-  // Рендер
+  // Рендерер
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
@@ -34,10 +35,10 @@ function initScene() {
   plane.rotation.x = -Math.PI / 2;
   scene.add(plane);
 
-  // Загрузка 3D-лиса
+  // Загрузка 3D-лиса (временно)
   const loader = new GLTFLoader();
   loader.load(
-    'https://models.readyplayer.me/64ee073cd4e4075dcadbb8c3.glb',
+    'https://models.readyplayer.me/64ee073cd4e457dcabddb8c3.glb',
     (gltf) => {
       const fox = gltf.scene;
       fox.scale.set(2, 2, 2);
@@ -58,21 +59,10 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// Эта функция запускается после нажатия START и инициирует всю 3D-игру
-function startGame() {
-  initScene();
-  animate();
-}
-
+// Запуск после загрузки UI
 window.addEventListener('load', () => {
-  const loader = document.getElementById('loader');
-  const startBtn = document.getElementById('startBtn');
-
-  if (startBtn) {
-    startBtn.style.display = 'block';
-    startBtn.addEventListener('click', () => {
-      loader.style.display = 'none';
-      startGame();
-    });
-  }
+  initUI(() => {
+    initScene();
+    animate();
+  });
 });

@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.skypack.dev/three';
+import { GLTFLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js';
 import { initUI } from './ui.js';
 
-// Инициализация сцены и камеры
 let scene, camera, renderer;
 
 function initScene() {
@@ -23,9 +23,23 @@ function initScene() {
   );
   plane.rotation.x = -Math.PI / 2;
   scene.add(plane);
+
+  const loader = new GLTFLoader();
+  loader.load(
+    'https://models.readyplayer.me/64ee073cd4e4075dcadbb8c3.glb',
+    (gltf) => {
+      const fox = gltf.scene;
+      fox.scale.set(2, 2, 2);
+      fox.position.set(0, 0, 0);
+      scene.add(fox);
+    },
+    undefined,
+    (error) => {
+      console.error('Ошибка загрузки модели:', error);
+    }
+  );
 }
 
-// Анимация камеры
 function animate() {
   requestAnimationFrame(animate);
   camera.position.z -= 0.1;
@@ -45,8 +59,12 @@ window.addEventListener('load', () => {
   if (startBtn) {
     startBtn.style.display = 'block';
     startBtn.addEventListener('click', () => {
-      loader.style.display = 'none'; // Убираем экран загрузки
-      startGame(); // Запуск игры
+      loader.style.transition = 'opacity 0.5s ease-out';
+      loader.style.opacity = 0;
+      setTimeout(() => {
+        loader.style.display = 'none';
+        startGame();
+      }, 500);
     });
   }
 });

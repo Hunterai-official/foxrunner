@@ -1,44 +1,61 @@
 import * as THREE from 'https://cdn.skypack.dev/three';
 
-// Сцена
-const scene = new THREE.Scene();
+let scene, camera, renderer;
 
-// Камера
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.set(0, 10, 20);
-camera.lookAt(0, 0, 0);
+function initScene() {
+  // Сцена
+  scene = new THREE.Scene();
 
-// Рендер
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+  // Камера
+  camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  camera.position.set(0, 10, 20);
+  camera.lookAt(0, 0, 0);
 
-// Свет
-const ambient = new THREE.AmbientLight(0xffffff, 0.8);
-scene.add(ambient);
+  // Рендер
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
 
-// Плоскость (земля)
-const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(100, 100),
-  new THREE.MeshStandardMaterial({ color: 0x00aa55 })
-);
-plane.rotation.x = -Math.PI / 2;
-scene.add(plane);
+  // Свет
+  const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+  scene.add(ambient);
 
-// Анимация
+  // Плоскость (земля)
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(100, 100),
+    new THREE.MeshStandardMaterial({ color: 0x00aa55 })
+  );
+  plane.rotation.x = -Math.PI / 2;
+  scene.add(plane);
+}
+
 function animate() {
   requestAnimationFrame(animate);
+  camera.position.z -= 0.1;
+  camera.lookAt(camera.position.x, 0, camera.position.z - 5);
   renderer.render(scene, camera);
 }
-animate();
 
-// Скрыть загрузку после полной инициализации
+// Эта функция запускается после нажатия START и инициирует всю 3D-игру
+function startGame() {
+  initScene();
+  animate();
+}
+
 window.addEventListener('load', () => {
   const loader = document.getElementById('loader');
-  if (loader) loader.style.display = 'none';
+  const startBtn = document.getElementById('startBtn');
+
+  if (startBtn) {
+    startBtn.style.display = 'block';
+    startBtn.addEventListener('click', () => {
+      loader.style.display = 'none';
+      startGame();
+    });
+  }
 });
